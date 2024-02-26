@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- <style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .weather-container {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+</style> -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            // Update the form fields with latitude and longitude
+            document.getElementById("latitude").value = position.coords.latitude;
+            document.getElementById("longitude").value = position.coords.longitude;
+
+            // Submit the form
+            document.getElementById("weatherForm").submit();
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="weather-container">
+        <h1>Weather Information</h1>
+        <form id="weatherForm" action="{{ url_for('weather') }}" method="post">
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+            <button type="button" onclick="getLocation()">Get Weather</button>
+            <button type="button"><a href="webcam" style="text-decoration: none;">Predict Growth stage</a></button>
+        </form>
+        {% if weather_data %}
+        <p>Location: {{weather_data['name']}}</p>
+        <p>Weather Now: {{ weather_data['weather'][0]['main'] }} </p>
+        <p>Description: {{ weather_data['weather'][0]['description'] }} </p>
+        <ul>
+            <li>
+                <p>Temperature: {{ weather_data['main']['temp'] }}°C</p>
+            </li>
+            <li>
+                <p>Feels like: {{ weather_data['main']['feels_like'] }}°C</p>
+            </li>
+            <li>
+                <p>Temp Min: {{ weather_data['main']['temp_min'] }}°C</p>
+            </li>
+            <li>
+                <p>Temp Max: {{ weather_data['main']['temp_max'] }}°C</p>
+            </li>
+            <li>
+                <p>Pressure: {{ weather_data['main']['pressure'] }}hPa</p>
+            </li>
+            <li>
+                <p>humidity: {{ weather_data['main']['humidity'] }}%</p>
+            </li>
+        </ul>
+        <!-- <p>Description: {{ weather_data }}</p> -->
+        {% endif %}
+    </div>
+</body>
+
+</html>
