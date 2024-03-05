@@ -75,6 +75,7 @@
         </form>
         {% if weather_data %}
         <p>Location: {{weather_data['name']}}</p>
+        <!-- <p>Location: Thandalam</p> -->
         <p>Weather Now: {{ weather_data['weather'][0]['main'] }} </p>
         <p>Description: {{ weather_data['weather'][0]['description'] }} </p>
         <ul>

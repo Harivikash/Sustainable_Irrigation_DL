@@ -10,9 +10,6 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-# noOfFlowers=0
-
-
 @app.route('/')
 def home():
     # if request.method =='POST':
@@ -48,13 +45,8 @@ def webcam():
     # Perform YOLO prediction 
     predicted_result = yolo_prediction(frame)
     timestamp = int(time.time())
-    noOfFlowers = predicted_result
-    growthStage=growth_stage(noOfFlowers)
-    if growth_stage=='flowering stage':
-        water_needed=10     #water needed for flowering stages
-    else:
-        water_needed=5      #water needed during early stages
-    return render_template('webcam.html', predicted_result=predicted_result, timestamp=timestamp,growthStage=growthStage)
+
+    return render_template('webcam.html', predicted_result=predicted_result, timestamp=timestamp)
 
 
 def yolo_prediction(image):
@@ -62,7 +54,7 @@ def yolo_prediction(image):
     # This is a placeholder, you should integrate your YOLO model here
     model = YOLO(r"C:\Users\mhari\Desktop\Flower-detector-1\runs\detect\model32\weights\best.pt")
     pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    results = model(pil_image,conf=0.8) # results list]
+    results = model(pil_image) # results list]
     # pil_image.save("static/webcam.jpg")
     # predicted_result = __len__(results)
     for r in results:
@@ -72,14 +64,6 @@ def yolo_prediction(image):
         # im.show()
     
     return len(results[0])
-
-def growth_stage(noOfFlowers):
-    if noOfFlowers>=1:
-        return 'flowering stage'
-    else:
-        return 'not yet reached flowering stage'
-    
-    
 
 if __name__ == '__main__':
     app.run(debug=True)
