@@ -6,6 +6,7 @@ import numpy as np
 from ultralytics import YOLO
 from PIL import Image
 import matplotlib.pyplot as plt
+import json
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -24,7 +25,16 @@ def weather():
     if request.method =='POST':
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
-        
+        if request.method == 'POST':
+            latitude = request.form.get('latitude')
+            longitude = request.form.get('longitude')
+            
+            # Fetch weather data
+            weather_data = get_weather_data(latitude, longitude)
+
+            # Save weather data to a JSON file
+            with open('weather_data.json', 'w') as file:
+                json.dump(weather_data, file)
         weather_data= get_weather_data(latitude, longitude)
         return render_template('index.html',weather_data=weather_data)
     return render_template('index.html')
@@ -70,7 +80,19 @@ def yolo_prediction(image):
         im = Image.fromarray(im_array[..., ::-1])  # RGB PIL image
         im.save("static/webcam.jpg")
         # im.show()
+        
     
+
+    # Save YOLO predictions to a file
+    if len(results[0])>0:
+        predictions = {"object_detected": 1, "class": "flower"}
+    else:
+        predictions = {"object_detected": 0, "class": "flower"}
+        
+    # print(len(results[0].boxes.conf.numpy()))
+    with open('yolo_predictions.json', 'w') as file:
+        json.dump(predictions, file)
+
     return len(results[0])
 
 def growth_stage(noOfFlowers):
